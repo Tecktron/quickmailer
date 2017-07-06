@@ -14,7 +14,9 @@ if __name__ == "__main__":
                         help="The plain text message or filename of a message to send")
     parser.add_argument('-t', '--to', dest='to', nargs='+', metavar='email@domain.com', type=str,
                         help="Email address to recieve the message", required=True)
-    parser.add_argument('-f', '--from', dest='sender', type=str, help="The from Email. Must be enabled in the AWS config")
+    parser.add_argument('-f', '--from', dest='sender', type=str, required=False,
+                        help="The from Email, if not provided, the settings will be used. NOTE: A specific address may "
+                             "be required by your SMTP server")
     parser.add_argument('-s', '--subject', dest='subject', required=True, type=str, help='The subject line')
     parser.add_argument('-w', '--html', dest='html', action='store_true', required=False,
                         help='If using a file for m and file is html set this flag to use html email')

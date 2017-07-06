@@ -3,7 +3,7 @@ import sys
 import os
 
 if __name__ == "__main__":
-    if sys.version_info < (3, 5):
+    if sys.version_info < (3, 0):
         print('This script requires version 3.5+ of python. Please try running it with command `python3` instead')
         exit(8)
 

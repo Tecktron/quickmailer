@@ -21,6 +21,9 @@ if __name__ == "__main__":
     parser.add_argument("-s", "--subject", dest="subject", required=True, type=str, help="The subject line")
     parser.add_argument("-w", "--html", dest="html", action="store_true", required=False,
                         help="If using a file for m and file is html set this flag to use html email")
+    parser.add_argument("-a", "--attach", dest="attach", metavar="/path/to/file.txt", nargs="*", required=False,
+                        help="files to attach (use full path)")
+
 
     args = parser.parse_args()
 
@@ -41,7 +44,7 @@ if __name__ == "__main__":
 
     django.setup()
     # don't import Django things until after setup or errors abound
-    from django.core.mail import send_mail
+    from django.core.mail import EmailMessage, EmailMultiAlternatives
     from django.utils.html import strip_tags
 
     msg = ""
@@ -51,26 +54,32 @@ if __name__ == "__main__":
     else:
         try:
             msg = open(args.msg).read()
-            is_file = True
         except OSError as e:
             print("Could not read msg file, exception said: {}".format(e))
             exit(4)
 
     sender = args.sender
-    if sender == "":
+    if not sender:
         sender = settings.DEFAULT_FROM_EMAIL
 
-    if is_file and args.html:
+    if args.html:
         # quick and dirty, create a plain text version.
         # replace breaks and paragraphs with newlines
         plain = re.sub("<br\s*?>", "\n", msg)
         plain = re.sub("</p>", "\n\n", plain)
         # strip the rest of the tags.
         plain = strip_tags(plain)
-        sent = send_mail(args.subject, plain, sender, args.to, fail_silently=False, html_message=msg)
+        email = EmailMultiAlternatives(args.subject, plain, sender, args.to)
+        email.attach_alternative(msg, "text/html")
     else:
-        sent = send_mail(args.subject, msg, sender, args.to, fail_silently=False)
+        email = EmailMessage(args.subject, msg, sender, args.to)
 
+    if len(args.attach):
+        for attachment in args.attach:
+            if os.path.isfile(attachment):
+                email.attach_file(attachment)
+
+    sent = email.send()
     if sent:
         print("Email sent successfully")
     else:

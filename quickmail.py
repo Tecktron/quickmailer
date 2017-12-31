@@ -22,7 +22,7 @@ if __name__ == "__main__":
     parser.add_argument("-w", "--html", dest="html", action="store_true", required=False,
                         help="If using a file for m and file is html set this flag to use html email")
     parser.add_argument("-a", "--attach", dest="attach", metavar="/path/to/file.txt", nargs="*", required=False,
-                        help="files to attach (use full path)")
+                        help="files to attach (use full path)", default=[])
 
 
     args = parser.parse_args()

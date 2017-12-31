@@ -24,7 +24,6 @@ if __name__ == "__main__":
     parser.add_argument("-a", "--attach", dest="attach", metavar="/path/to/file.txt", nargs="*", required=False,
                         help="files to attach (use full path)", default=[])
 
-
     args = parser.parse_args()
 
     # Here we inject the settings and load django
